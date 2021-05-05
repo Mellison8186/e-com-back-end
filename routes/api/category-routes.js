@@ -2,14 +2,45 @@ const router = require('express').Router();
 const { Category, Product } = require('../../models');
 
 router.get('/', (req, res) => {
-  // find all categories
-  Category.findAll()
-  // be sure to include its associated Products
+  // find all categories and include its associated Products
+  Category.findAll({
+    attributes: ['id', 'category_name'],
+        include: [
+          {
+            model: Product,
+            attributes: ['id', 'product_name', 'price','stock']
+          }
+        ]
+  })
+  .then(category => res.json(category))
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  })
 });
 
 router.get('/:id', (req, res) => {
-  // find one category by its `id` value
-  // be sure to include its associated Products
+  // find one category by its `id` value and include its associated Products
+  Category.findOne({
+    attributes: ['id', 'category_name'],
+    include: [
+      {
+        model: Product,
+        attributes: ['id', 'product_name', 'price', 'stock']
+      }
+    ]
+  })
+  .then(category => {
+    if (!category) {
+      res.status(404).json({ message: 'Category not found!'});
+      return;
+    }
+    res.json(category);
+  })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+  });
 });
 
 router.post('/', (req, res) => {
