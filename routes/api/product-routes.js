@@ -90,7 +90,7 @@ router.post('/', (req, res) => {
 
 // update product
 router.put('/:id', (req, res) => {
-  // update product data
+  console.log(req.body);
   Product.update(req.body, {
     where: {
       id: req.params.id,
@@ -134,10 +134,11 @@ router.delete('/:id', (req, res) => {
   Product.destroy({
     where: {
       id: req.params.id
-    }
+    },
+  })
     .then(product => {
-      if (product) {
-        res.status(404).json({message: 'No Product found'});
+      if (!product) {
+        res.status(404).json({ message: 'No Product found' });
         return;
       }
       res.json(product);
@@ -145,8 +146,7 @@ router.delete('/:id', (req, res) => {
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
-    }),
+    });
   });
-});
 
 module.exports = router;

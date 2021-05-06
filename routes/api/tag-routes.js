@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   // find all tags
   // be sure to include its associated Product data
   Tag.findAll({
-    attributes: ['id', 'tag_name'],
+    // attributes: ['id', 'tag_name'],
     include: [
       {
         model: Product,
@@ -24,8 +24,11 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
   // find a single tag by its `id` and include its associated Product data
-  Tag.findAll({
-  attributes: ['id', 'tag_name'],
+  Tag.findOne({
+    where: {
+      id: req.params.id
+  },
+  // attributes: ['id', 'tag_name'],
   include: [
     {
       model: Product,
@@ -61,7 +64,11 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
-  Tag.update(req.res, {
+  Tag.update(
+    {
+      tag_name: req.body.tag_name
+    },
+    {
     where: {
       id: req.params.id
     }
@@ -83,7 +90,8 @@ router.delete('/:id', (req, res) => {
   Tag.destroy({
     where: {
       id: req.params.id
-    }
+    },
+  })
     .then(tag => {
       if (!tag) {
         res.status(404).json({ message: 'Tag does not exist'});
@@ -94,8 +102,7 @@ router.delete('/:id', (req, res) => {
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
-    }),
-  });
+    });
 });
 
 module.exports = router;
